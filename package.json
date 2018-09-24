@@ -4,6 +4,7 @@
   "description": "A general purpose color scheme",
   "main": "theme.js",
   "scripts": {
+    "build": "node theme.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -21,5 +22,9 @@
   "bugs": {
     "url": "https://github.com/Evelios/atum-theme/issues"
   },
-  "homepage": "https://github.com/Evelios/atum-theme#readme"
+  "homepage": "https://github.com/Evelios/atum-theme#readme",
+  "dependencies": {
+    "chroma-js": "^1.4.0",
+    "new-array": "^1.0.0"
+  }
 }
