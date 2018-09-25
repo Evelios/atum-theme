@@ -9,13 +9,14 @@ function createColorScheme() {
 
   // ---- Color Parameters ----
   const base_hue = 30; // red
-  const foreground_hue = hueComplament(base_hue);
   const primary_chroma = 80;
   const secondary_chroma = 5;
-  const background_lightness = 20;
   const vibrant_lightness = 75;
   const mute_lightness = 85;
-  const foreground_lightness = 85;
+
+  const dark_tones = createBackgroundDarkTones(base_hue, secondary_chroma);
+  const content_tones = createContentTones(base_hue, secondary_chroma);
+  const light_tones = createBackgroundLightTones(base_hue, secondary_chroma);
 
   // ---- Create Colors ----
   let colors = [];
@@ -25,11 +26,8 @@ function createColorScheme() {
   colors.push(black_vibrant);
   
   // Create the Vibrant Primary Colors
-  for (let i = 0; i < num_primary_colors; i++) {
-    const hue = (base_hue + (i / num_primary_colors) * 360) % 360;
-    const vibrant_color = chroma.lch(vibrant_lightness, primary_chroma, hue);
-    colors.push(vibrant_color);
-  }
+  const vibrant_accents = createVibrantAccentColors(base_hue, primary_chroma);
+  colors = colors.concat(vibrant_accents);
   
   // Create the vibrant white
   colors.push(chroma('white'));
@@ -39,18 +37,17 @@ function createColorScheme() {
   colors.push(black_mute);
 
   // Create the Light Primary Colors
-  for (let i = 0; i < num_primary_colors; i++) {
-    const hue = (base_hue + (i / num_primary_colors) * 360) % 360;
-    const mute_color = chroma.lch(mute_lightness, primary_chroma, hue);
-    colors.push(mute_color);
-  }
+  const mute_accents = createMuteAccentColors(base_hue, primary_chroma);
+  colors = colors.concat(mute_accents);
 
   // Create the mute white
   colors.push(chroma('white'));
 
   // Create the foreground and background
-  const foreground = chroma.lch(foreground_lightness, secondary_chroma, foreground_hue);
-  const background = chroma.lch(background_lightness, secondary_chroma, base_hue);
+  // const foreground = chroma.lch(foreground_lightness, secondary_chroma, foreground_hue);
+  // const background = chroma.lch(background_lightness, secondary_chroma, base_hue);
+  const foreground = content_tones[2];
+  const background = dark_tones[0];
 
   colors.push(foreground);
   colors.push(background);
@@ -64,6 +61,54 @@ function createColorScheme() {
   swap(colors, 12, 14);
 
   saveToXresources(colors);
+}
+
+function createVibrantAccentColors(base_hue, accent_chroma) {
+  const num_primary_colors = 6;
+  const vibrant_lightness = 75;
+
+  return array(num_primary_colors).map((_, i) => {
+    const hue = (base_hue + (i / num_primary_colors) * 360) % 360;
+    return chroma.lch(vibrant_lightness, accent_chroma, hue);
+  });
+}
+
+function createMuteAccentColors(base_hue, accent_chroma) {
+  const num_primary_colors = 6;
+  const mute_lightness = 85;
+
+  return array(num_primary_colors).map((_, i) => {
+    const hue = (base_hue + (i / num_primary_colors) * 360) % 360;
+    return chroma.lch(mute_lightness, accent_chroma, hue);
+  });
+}
+
+function createBackgroundDarkTones(base_hue, bg_chroma) {
+  const base03_lightness = 15;
+  const base02_lightness = 20;
+
+  const base03 = chroma.lch(base03_lightness, bg_chroma, base_hue);
+  const base02 = chroma.lch(base02_lightness, bg_chroma, base_hue);
+
+  return [base03, base02];
+}
+
+function createContentTones(base_hue, content_chroma) {
+  const lightness_values = [45, 50, 60, 65];
+
+  return lightness_values.map(lightness => 
+    chroma.lch(lightness, content_chroma, base_hue)
+  );
+}
+
+function createBackgroundLightTones(base_hue, bg_chroma) {
+  const base2_lightness = 92;
+  const base3_lightness = 97;
+
+  const base2 = chroma.lch(base2_lightness, bg_chroma, base_hue);
+  const base3 = chroma.lch(base3_lightness, bg_chroma, base_hue);
+
+  return [base2, base3];
 }
 
 /**
