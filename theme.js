@@ -5,17 +5,17 @@ const fs = require('fs');
 createColorScheme();
 
 function createColorScheme() {
+  const num_primary_colors = 6;
 
   // ---- Color Parameters ----
-  const base_hue = 36; // red
+  const base_hue = 30; // red
   const foreground_hue = hueComplament(base_hue);
-  const primary_chroma = 70;
-  const secondary_chroma = 10;
-  const background_lightness = 30;
-  const vibrant_lightness = 60;
-  const mute_lightness = 80;
+  const primary_chroma = 80;
+  const secondary_chroma = 5;
+  const background_lightness = 20;
+  const vibrant_lightness = 75;
+  const mute_lightness = 85;
   const foreground_lightness = 85;
-  const num_primary_colors = 6;
 
   // ---- Create Colors ----
   let colors = [];
@@ -38,7 +38,6 @@ function createColorScheme() {
   const black_mute = chroma.lch(mute_lightness, secondary_chroma, base_hue);
   colors.push(black_mute);
 
-
   // Create the Light Primary Colors
   for (let i = 0; i < num_primary_colors; i++) {
     const hue = (base_hue + (i / num_primary_colors) * 360) % 360;
@@ -56,6 +55,13 @@ function createColorScheme() {
   colors.push(foreground);
   colors.push(background);
   
+  // To keep things consistent the order of the colors need to be rearranged
+  swap(colors, 2, 3);
+  swap(colors, 10, 11);
+  swap(colors, 5, 6);
+  swap(colors, 13, 14);
+  swap(colors, 4, 6);
+  swap(colors, 12, 14);
 
   saveToXresources(colors);
 }
@@ -72,7 +78,7 @@ function createColorScheme() {
  */
 function saveToXresources(colors) {
   const color_names = ['black', 'red', 'green', 'yellow',
-     'blue', 'magent', 'cyan', 'white'];
+     'blue', 'magenta', 'cyan', 'white'];
   let xresources_contents = '';
 
   // Base Color Values
@@ -91,6 +97,12 @@ function saveToXresources(colors) {
   }
 
   fs.writeFile('.Xresources', xresources_contents);
+}
+
+function swap(array, i, j) {
+  const temp = array[i];
+  array[i] = array[j];
+  array[j] = temp;
 }
 
 function hueComplament(hue) {
